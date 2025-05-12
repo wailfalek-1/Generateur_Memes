@@ -1,0 +1,129 @@
+/* Main Styles */
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1c20 0%, #2d3436 100%);
+    color: white;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Controls Section */
+.controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 20px 0;
+}
+
+/* Text Settings Styling */
+.text-settings {
+    display: grid;
+    grid-gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.text-settings input,
+.text-settings select {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.text-settings input:focus,
+.text-settings select:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* File Upload Styling */
+.custom-file-upload {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #8e44ad;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 300px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.custom-file-upload:hover {
+    background: #732d91;
+    transform: translateY(-2px);
+}
+
+/* Button Styling */
+button {
+    background: #9b59b6;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    width: 250px;
+}
+
+button:hover {
+    background: #8e44ad;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Canvas Styling */
+.canvas-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+#meme-canvas {
+    max-width: 100%;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .controls {
+        grid-template-columns: 1fr;
+    }
+
+    button,
+    .custom-file-upload {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+}

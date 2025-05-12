@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Générateur de Memes</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1c20 0%, #2d3436 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            display: grid;
+            grid-gap: 1rem;
+            margin-bottom: 2rem;
+            justify-items: center;
+        }
+
+        .custom-file-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            background: #2196F3;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            width: 220px;
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+        }
+
+        .custom-file-upload:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 180px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .text-settings input,
+        .text-settings select {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #8e44ad;
+            background: rgba(155, 89, 182, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .text-settings input:focus,
+        .text-settings select:focus {
+            border-color: #9b59b6;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.2);
+            background: rgba(155, 89, 182, 0.2);
+        }
+
+        .text-settings input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .text-settings select {
+            background: rgba(155, 89, 182, 0.2);
+        }
+
+        .text-settings select option {
+            background: #2d3436;
+            color: white;
+        }
+
+        input[type="color"] {
+            width: 60px;
+            height: 40px;
+            padding: 2px;
+            border: 2px solid #8e44ad;
+            border-radius: 5px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 15px 30px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #8e44ad;
+        }
+
+        .text-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .text-settings input, .text-settings select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        canvas {
+            max-width: 100%;
+            border-radius: 10px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <h1>Générateur de Memes</h1>
+
+        <div class="controls">
+            <label class="custom-file-upload">
+                <input type="file" id="imageUpload" accept="image/*">
+                Choisir une image
+            </label>
+            
+            <div class="text-settings">
+                <input type="text" id="memeText" placeholder="Entrer le texte ici">
+                <input type="number" id="fontSize" value="40" min="10" max="100" placeholder="Taille du texte">
+                <input type="color" id="textColor" value="#ffffff">
+                <select id="fontFamily">
+                    <option value="Arial">Arial</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Comic Sans MS">Comic Sans MS</option>
+                    <option value="italic">italic</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Calibri">Calibri</option>
+
+                </select>
+            </div>
+
+            <button onclick="drawMeme()">Créer le meme</button>
+            <button onclick="downloadMeme()">Télécharger</button>
+            <button onclick="shareMeme()">Partager</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="meme-canvas" width="600" height="600"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let canvas = document.getElementById("meme-canvas");
+        let ctx = canvas.getContext("2d");
+        let image = new Image();
+        let isDragging = false;
+        let textX = canvas.width / 2;
+        let textY = canvas.height / 2;
+        let lastX, lastY;
+
+        document.getElementById("imageUpload").addEventListener("change", function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                image.onload = function() {
+                    drawMeme();
+                };
+                image.src = event.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+        canvas.addEventListener('mousedown', startDragging);
+        canvas.addEventListener('mousemove', drag);
+        canvas.addEventListener('mouseup', stopDragging);
+
+        function startDragging(e) {
+            isDragging = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                textX += x - lastX;
+                textY += y - lastY;
+                
+                lastX = x;
+                lastY = y;
+                
+                drawMeme();
+            }
+        }
+
+        function stopDragging() {
+            isDragging = false;
+        }
+
+        function drawMeme() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw image
+            if (image.src) {
+                const ratio = Math.min(canvas.width / image.width, canvas.height / image.height);
+                const newWidth = image.width * ratio;
+                const newHeight = image.height * ratio;
+                const x = (canvas.width - newWidth) / 2;
+                const y = (canvas.height - newHeight) / 2;
+                ctx.drawImage(image, x, y, newWidth, newHeight);
+            }
+
+            // Draw text
+            const text = document.getElementById("memeText").value;
+            const fontSize = document.getElementById("fontSize").value;
+            const textColor = document.getElementById("textColor").value;
+            const fontFamily = document.getElementById("fontFamily").value;
+
+            ctx.font = `${fontSize}px ${fontFamily}`;
+            ctx.fillStyle = textColor;
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = fontSize / 20;
+            ctx.textAlign = "center";
+            
+            // Add stroke
+            ctx.strokeText(text, textX, textY);
+            // Add fill
+            ctx.fillText(text, textX, textY);
+        }
+
+        function downloadMeme() {
+            const link = document.createElement('a');
+            link.download = 'meme.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function shareMeme() {
+            canvas.toBlob(blob => {
+                const file = new File([blob], "meme.png", { type: "image/png" });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: "Nouveau meme",
+                        text: "Créé avec le générateur de memes!"
+                    }).catch(error => console.log("Erreur de partage:", error));
+                } else {
+                    alert("Le partage n'est pas supporté sur cet appareil.");
+                }
+            });
+        }
+
+        // Initial draw
+        drawMeme();
+    </script>
+</body>
+</html>
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .text-settings {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+
+            .text-settings input,
+            .text-settings select {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            .custom-file-upload,
+            button {
+                width: 100%;
+                max-width: none;
+                font-size: 14px;
+                margin-bottom: 0.5rem;
+            }
+
+            canvas {
+                width: 100%;
+                height: auto;
+                max-width: 400px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 1rem;
+            }
+
+            input[type="color"] {
+                width: 100%;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0.5rem;
+                padding: 0.8rem;
+            }
+
+            .controls {
+                grid-gap: 0.8rem;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .text-settings input,
+            .text-settings select,
+            .custom-file-upload,
+            button {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+        }
